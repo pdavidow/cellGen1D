@@ -1,6 +1,7 @@
 # cellGen1D
 
-One-dimensional cellular automata.
-
+One-dimensional cellular automata
+---------------------------------------------------
 stack ghci
+
 main
