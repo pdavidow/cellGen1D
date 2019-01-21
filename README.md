@@ -1,4 +1,4 @@
-# One-dimensional cellular automata
+# One-Dimensional Cellular Automata
 ---------------------------------------------------
 stack ghci
 
