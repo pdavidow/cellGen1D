@@ -29,11 +29,6 @@ isOne d =
 
 instance Cell Digit
     where
-
-    isWrap :: Digit -> Bool
-    isWrap _ =
-        True
-
    
     isTerminalRow :: CellRow Digit -> Bool  
     isTerminalRow (CellRow row) =

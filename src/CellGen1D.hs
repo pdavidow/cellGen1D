@@ -61,11 +61,20 @@ genRows rowLength r =
 
 class Cell a 
     where
-    isWrap :: a -> Bool
+
+    --------------------------------------------
+    -- Minimal complete definition: All of these
     isTerminalRow :: CellRow a -> Bool
     genCell :: Pattern a -> a
     seedRow :: RowLength -> IO (CellRow a)    
     toString :: a -> String   
+    --------------------------------------------
+
+    
+    isWrap :: a -> Bool
+    isWrap _ =
+        True
+
 
     genRow :: RowLength -> CellRow a -> CellRow a
     genRow rowLength (CellRow row) =

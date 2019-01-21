@@ -1,8 +1,7 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Data.Array (elems)
-import CellGen1D (CellRow(..), genRows, rowsToString, toCells, toRow) 
+import CellGen1D (genRows, rowsToString, toCells, toRow) 
 import RowLength (mkValidRowLength)
 import Digit (Digit(..)) 
 import Note (Note(..))
