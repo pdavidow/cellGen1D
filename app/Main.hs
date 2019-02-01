@@ -1,13 +1,11 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Main 
     where
 
 import System.IO   
-import CellGen1D (Cell, CellRow, genRows, rowsToString)
+import CellGen1D (CellRow, Pattern, genRows, rowsToString)
 import RowLength (RowLength, mkRowLength)
-import Digit (Digit, seedRow) 
-import Note (Note, seedRow) 
+import Digit (Digit, genCell, isTerminalRow, isWrap, seedRow, toString) 
+import Note (Note, genCell, isTerminalRow, isWrap, seedRow, toString) 
 
 data Tagged_CellType
     = Tagged_Digit 
@@ -37,19 +35,19 @@ main = do
                         t <- cellType
                         case t of 
                             Tagged_Digit -> do
-                                r :: CellRow Digit <- seedRow rowLength
-                                genDisplay rowLength r
+                                r <- Digit.seedRow rowLength
+                                genDisplay Digit.isTerminalRow Digit.isWrap Digit.genCell Digit.toString rowLength r
 
                             Tagged_Note -> do
-                                r :: CellRow Note <- seedRow rowLength
-                                genDisplay rowLength r
+                                r <- Note.seedRow rowLength
+                                genDisplay Note.isTerminalRow Note.isWrap Note.genCell Note.toString rowLength r
                     Left error ->
                         putStrLn error
                 main
         else 
             pure () 
 
- 
+  
 cellType :: IO Tagged_CellType
 cellType = do
     putStrLn "\nWhich cell type ? (1: Digit, 2: Note): "
@@ -68,26 +66,26 @@ cellType = do
         cellType
 
 
-genDisplay :: Cell a => RowLength -> CellRow a -> IO ()        
-genDisplay rowLength r = do
-    let rs = genRows rowLength r
+genDisplay :: (CellRow a -> Bool) -> (a -> Bool) -> (Pattern a -> a) -> (a -> String) -> RowLength -> CellRow a -> IO ()        
+genDisplay f g h i rowLength r = do
+    let rs = genRows f g h rowLength r
     putStrLn ""
-    displayRows rs
+    displayRows i rs
 
 
-displayRows :: Cell a => [CellRow a] -> IO ()
-displayRows rs = do
+displayRows :: (a -> String) -> [CellRow a] -> IO ()
+displayRows f rs = do
     let (prefix, suffix) = splitAt maxCount rs
-    putStrLn $ rowsToString prefix
+    putStrLn $ rowsToString f prefix
 
     if null suffix then
         pure ()
     else
-        seeMore suffix
+        seeMore f suffix
 
 
-seeMore :: Cell a => [CellRow a] -> IO ()    
-seeMore rs = do
+seeMore :: (a -> String) -> [CellRow a] -> IO ()    
+seeMore f rs = do
     putStrLn "\nSee more?: (0 for no, 1 for yes)" -- todo String or Char
     eof <- isEOF
     if not eof
@@ -97,12 +95,12 @@ seeMore rs = do
 
             if n == 1 then do
                 putStrLn ""
-                displayRows rs
+                displayRows f rs
             else if n == 0 then
                 pure () 
             else do
                 putStrLn "\nInvalid response"
-                seeMore rs
+                seeMore f rs
         else 
             pure ()         
 
